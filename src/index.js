@@ -16,6 +16,14 @@ app.use(express.json());
 
 app.post("/txntracker", (req, res) => {
   notificationReceived(req);
+  console.log("______________Request o/p");
+  console.log(req);
+  console.log("______________Body o/p");
+  console.log(req.body);
+  console.log("______________Param o/p");
+  console.log(req.param);
+  console.log("______________Query o/p");
+  console.log(req.query);
   res.status(200).end();
 });
 
