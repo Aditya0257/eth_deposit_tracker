@@ -20,7 +20,11 @@ app.post("/txntracker", (req, res) => {
 });
 
 app.get("/*", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+  res.json({
+    "message": "Server is running!",
+    "success": true
+  })
+  // res.sendFile(path.join(__dirname, "index.html"));
 });
 
 const server = createServer(app);
