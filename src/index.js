@@ -16,14 +16,19 @@ app.use(express.json());
 
 app.post("/txntracker", (req, res) => {
   notificationReceived(req);
-  console.log("______________Request o/p");
-  console.log(req);
   console.log("______________Body o/p");
   console.log(req.body);
-  console.log("______________Param o/p");
-  console.log(req.param);
-  console.log("______________Query o/p");
-  console.log(req.query);
+  console.log("______________Body Activity o/p");
+  console.log(req.body.event.activity);
+  const arr = req.body.event.activity;
+  for(let i = 0; arr.length; i++) {
+    const temp = JSON.parse(arr[i]);
+    const temp_str = JSON.stringify(temp);
+    console.log(arr[i]);
+    console.log("stringified JSON object =>")
+    console.log(temp_str);
+    console.log("This iteration ends!");
+  }
   res.status(200).end();
 });
 
