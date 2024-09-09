@@ -16,20 +16,23 @@ app.use(express.json());
 
 app.post("/txntracker", (req, res) => {
   notificationReceived(req);
-  console.log("______________Body Activity o/p");
-  console.log(req.body.event.activity);
-  const arr = req.body.event.activity;
-  for (let i = 0; arr.length; i++) {
-    console.log(arr[i]);
-    console.log(" object's Log's topic =>");
-    let topics = arr[i].log.topics;
-    console.log(topics);
-    console.log("INDIVIDUAL TOPCIS DATA =>");
-    for (let j = 0; j < topics.length; j++) {
-      console.log(topics[j]);
-    }
-    console.log("This iteration ends!");
-  }
+
+  console.log(req.body);
+
+  // console.log("______________Body Activity o/p");
+  // console.log(req.body.event.activity);
+  // const arr = req.body.event.activity;
+  // for (let i = 0; arr.length; i++) {
+  //   console.log(arr[i]);
+  //   console.log(" object's Log's topic =>");
+  //   let topics = arr[i].log.topics;
+  //   console.log(topics);
+  //   console.log("INDIVIDUAL TOPCIS DATA =>");
+  //   for (let j = 0; j < topics.length; j++) {
+  //     console.log(topics[j]);
+  //   }
+  //   console.log("This iteration ends!");
+  // }
   res.status(200).end();
 });
 
