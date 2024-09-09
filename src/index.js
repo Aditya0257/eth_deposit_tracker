@@ -16,17 +16,18 @@ app.use(express.json());
 
 app.post("/txntracker", (req, res) => {
   notificationReceived(req);
-  console.log("______________Body o/p");
-  console.log(req.body);
   console.log("______________Body Activity o/p");
   console.log(req.body.event.activity);
   const arr = req.body.event.activity;
-  for(let i = 0; arr.length; i++) {
-    const temp = JSON.parse(arr[i]);
-    const temp_str = JSON.stringify(temp);
+  for (let i = 0; arr.length; i++) {
     console.log(arr[i]);
-    console.log("stringified JSON object =>")
-    console.log(temp_str);
+    console.log(" object's Log's topic =>");
+    let topics = arr[i].log.topics;
+    console.log(topics);
+    console.log("INDIVIDUAL TOPCIS DATA =>");
+    for (let j = 0; j < topics.length; j++) {
+      console.log(topics[j]);
+    }
     console.log("This iteration ends!");
   }
   res.status(200).end();
@@ -34,9 +35,9 @@ app.post("/txntracker", (req, res) => {
 
 app.get("/*", (req, res) => {
   res.json({
-    "message": "Server is running!",
-    "success": true
-  })
+    message: "Server is running!",
+    success: true,
+  });
   // res.sendFile(path.join(__dirname, "index.html"));
 });
 
