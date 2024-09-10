@@ -11,8 +11,7 @@ const fs = require("fs");
 const app = express();
 const port = 3000;
 
-const BEACON_DEPOSIT_CONTRACT =
-  "0x00000000219ab540356cBB839Cbe05303d7705Fa";
+const BEACON_DEPOSIT_CONTRACT = "0x00000000219ab540356cBB839Cbe05303d7705Fa";
 
 const telegramBotToken = "7534814123:AAHF4D7uQxa2dW_m6LsbYIb2XDVNNEItP4M";
 const telegramChatId = "-1002392762080";
@@ -136,11 +135,32 @@ app.post("/txntracker", async (req: any, res: any) => {
         const block = await alchemy.core.getBlock(blockNumber);
         const timestamp = block.timestamp;
 
-        const hash = activity.log.transactionHash;
-        const receipt = await alchemy.core.getTransactionReceipt(hash);
+        const transactionHash = activity.log.transactionHash;
+        const receipt = await alchemy.core.getTransactionReceipt(
+          transactionHash
+        );
         const fee = receipt.gasUsed.mul(receipt.effectiveGasPrice).toString();
 
-        const decodedLog = contractInterface.parseLog(activity);
+        const blockHash = activity.log.blockHash;
+        const transactionIndex = parseInt(activity.log.transactionIndex, 16);
+        const address = activity.log.address;
+        const data = activity.log.data;
+        const topics = activity.log.topics;
+        const logIndex = parseInt(activity.log.logIndex, 16);
+
+        const log = {
+          blockNumber: blockNumber,
+          blockHash: blockHash,
+          transactionIndex: transactionIndex,
+          removed: false,
+          address: address,
+          data: data,
+          topics: topics,
+          transactionHash: transactionHash,
+          logIndex: logIndex,
+        };
+
+        const decodedLog = contractInterface.parseLog(log);
         const { pubkey, amount } = decodedLog.args;
         const pubKey = ethers.hexlify(pubkey);
 
@@ -148,7 +168,7 @@ app.post("/txntracker", async (req: any, res: any) => {
           blockNumber: blockNumber,
           blockTimestamp: timestamp,
           fee: fee,
-          hash: hash,
+          hash: transactionHash,
           pubKey: pubKey,
         };
 
