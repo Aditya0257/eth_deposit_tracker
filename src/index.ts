@@ -127,13 +127,15 @@ app.post("/txntracker", async (req: any, res: any) => {
 
     const { event } = req.body as WebhookEvent;
 
-    console.log(event);
-
 
     if (event && event.activity) {
       for (const activity of event.activity) {
         // if (activity.toAddress.toLowerCase() === BEACON_DEPOSIT_CONTRACT) {
-        
+
+        console.log(activity.log);
+
+
+
         const blockNumber = parseInt(activity.blockNum, 16);
         const block = await alchemy.core.getBlock(blockNumber);
         const timestamp = block.timestamp;
