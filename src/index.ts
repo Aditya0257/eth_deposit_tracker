@@ -4,55 +4,35 @@ const { ethers } = require("ethers");
 const axios = require("axios");
 require("dotenv").config();
 const { Alchemy, Network } = require("alchemy-sdk");
+const { BigNumber } = require("@ethersproject/bignumber");
 const { Interface } = require("@ethersproject/abi");
+const fs = require("fs");
 
 const app = express();
 const port = 3000;
 
 const BEACON_DEPOSIT_CONTRACT = "0x00000000219ab540356cBB839Cbe05303d7705Fa";
+
 const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN;
 const telegramChatId = process.env.TELEGRAM_CHAT_ID;
 
-const alchemy = new Alchemy({
-  apiKey: process.env.ALCHEMY_API_KEY,
+const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
+const settings = {
+  apiKey: ALCHEMY_API_KEY,
   network: Network.ETH_MAINNET,
-});
+  maxRetries: 10,
+};
 
+const alchemy = new Alchemy(settings);
 const prisma = new PrismaClient();
+
 app.use(express.json());
 
-// Define ABI for the DepositEvent
-const eventABI = [
-  // Event definition
-  {
-    anonymous: false,
-    inputs: [
-      { indexed: false, internalType: "bytes", name: "pubkey", type: "bytes" },
-      {
-        indexed: false,
-        internalType: "bytes",
-        name: "withdrawal_credentials",
-        type: "bytes",
-      },
-      { indexed: false, internalType: "bytes", name: "amount", type: "bytes" },
-      {
-        indexed: false,
-        internalType: "bytes",
-        name: "signature",
-        type: "bytes",
-      },
-      { indexed: false, internalType: "bytes", name: "index", type: "bytes" },
-    ],
-    name: "DepositEvent",
-    type: "event",
-  },
-];
-
-// Initialize the contract interface with the event ABI
-const contractInterface = new Interface(eventABI);
+type Deposit = any;
+type WebhookEvent = any;
 
 // Function to send Telegram notifications
-const sendTelegramNotification = async (message:any) => {
+const sendTelegramNotification = async (message: string) => {
   try {
     const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
     await axios.post(url, {
@@ -65,50 +45,48 @@ const sendTelegramNotification = async (message:any) => {
   }
 };
 
-app.post("/txntracker", async (req:any, res:any) => {
+app.post("/txntracker", async (req: any, res: any) => {
   try {
     console.log("Notification received!");
 
-    const { event } = req.body;
+    const { event } = req.body as WebhookEvent;
 
     if (event && event.activity) {
       for (const activity of event.activity) {
         const log = activity.log;
+        console.log("Log Activity:", log);
+        const blockNumber = parseInt(log.blockNumber, 16);
+        const block = await alchemy.core.getBlock(blockNumber);
+        const timestamp = block.timestamp;
+
         const transactionHash = log.transactionHash;
+        const receipt = await alchemy.core.getTransactionReceipt(
+          transactionHash
+        );
+        const fee = receipt.gasUsed.mul(receipt.effectiveGasPrice).toString();
 
-        console.log("Transaction Hash:", transactionHash);
+        // const blockHash = log.blockHash;
+        // const transactionIndex = parseInt(log.transactionIndex, 16);
+        // const address = log.address;
+        // const data = log.data;
+        // const topics = log.topics;
+        // const logIndex = parseInt(log.logIndex, 16);
+        const pubKey = activity.rawContract.address;
 
-        // Fetch the transaction logs using the transaction hash
-        const receipt = await alchemy.core.getTransactionReceipt(transactionHash);
+        const deposit: Deposit = {
+          blockNumber: blockNumber,
+          blockTimestamp: timestamp,
+          fee: fee,
+          hash: transactionHash,
+          pubKey: pubKey,
+        };
 
-        if (receipt && receipt.logs) {
-          for (const logEntry of receipt.logs) {
-            // Check if the log is from the Beacon Deposit Contract
-            if (logEntry.address.toLowerCase() === BEACON_DEPOSIT_CONTRACT.toLowerCase()) {
-              try {
-                const depositEventTopic = ethers.id("DepositEvent(bytes,bytes,bytes,bytes,bytes)");
-                if (logEntry.topics[0] === depositEventTopic) {
-                  // Decode the log to extract the pubkey
-                  const decodedLog = contractInterface.parseLog({
-                    data: logEntry.data,
-                    topics: logEntry.topics,
-                  });
-                  const pubkey = ethers.utils.hexlify(decodedLog.args.pubkey);
+        // Save the transaction to the database
+        // await prisma.transaction.create({ data: transaction });
+        console.log("New Deposit Transaction saved:", deposit);
 
-                  console.log("PubKey:", pubkey);
-
-                  // Save the transaction to the database (if needed)
-                  // await prisma.transaction.create({ data: { pubkey, ... } });
-
-                  // Send a notification
-                  await sendTelegramNotification(`New deposit with PubKey: ${pubkey}`);
-                }
-              } catch (error) {
-                console.error("Error decoding log:", error);
-              }
-            }
-          }
-        }
+        // Send a notification
+        await sendTelegramNotification("New deposit transaction detected.");
       }
     }
 
@@ -119,7 +97,7 @@ app.post("/txntracker", async (req:any, res:any) => {
   }
 });
 
-app.get("/*", (req:any, res:any) => {
+app.get("/*", (req: any, res: any) => {
   res.json({
     message: "Server is running!",
     success: true,
