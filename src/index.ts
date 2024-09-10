@@ -1,13 +1,14 @@
-const express = require("express");
-const { PrismaClient } = require("@prisma/client");
-const { ethers } = require("ethers");
-const axios = require("axios");
+import express from 'express';
+import { PrismaClient } from '@prisma/client';
+import { ethers } from 'ethers';
+import axios from 'axios';
 require("dotenv").config();
 const { Alchemy, Network } = require("alchemy-sdk");
 const { BigNumber } = require("@ethersproject/bignumber");
+import logger from './logger';
 
 const app = express();
-const port = 3000;
+const port = 3500;
 
 const BEACON_DEPOSIT_CONTRACT = "0x00000000219ab540356cBB839Cbe05303d7705Fa";
 
@@ -37,22 +38,23 @@ const sendTelegramNotification = async (message: string) => {
       chat_id: telegramChatId,
       text: message,
     });
-    console.log("Telegram notification sent.");
+    logger.info("Telegram notification sent.");
   } catch (error) {
-    console.error("Error sending Telegram notification:", error);
+    logger.error("Error sending Telegram notification:", error);
   }
 };
 
 app.post("/txntracker", async (req: any, res: any) => {
   try {
     console.log("Notification received!");
+    logger.info("Notification received!");
 
     const { event } = req.body as WebhookEvent;
 
     if (event && event.activity) {
       for (const activity of event.activity) {
         const log = activity.log;
-        console.log("Log Activity:", log);
+        logger.info("Log Activity:", log);
         const blockNumber = parseInt(log.blockNumber, 16);
         const block = await alchemy.core.getBlock(blockNumber);
         const timestamp = block.timestamp;
@@ -81,7 +83,7 @@ app.post("/txntracker", async (req: any, res: any) => {
 
         // Save the transaction to the database
         await prisma.deposit.create({ data: deposit });
-        console.log("New Deposit Transaction saved:", deposit);
+        logger.info("New Deposit Transaction saved:", deposit);
 
         // Send a notification with formatted deposit data
         await sendTelegramNotification(
@@ -99,7 +101,7 @@ app.post("/txntracker", async (req: any, res: any) => {
 
     res.status(200).send("OK");
   } catch (error) {
-    console.error("Error processing webhook:", error);
+    logger.error("Error processing webhook:", error);
     res.status(500).send("Internal Server Error");
   }
 });
@@ -113,4 +115,5 @@ app.get("/*", (req: any, res: any) => {
 
 app.listen(port, () => {
   console.log(`Webhook server listening at port no: ${port}`);
+  logger.info(`Webhook server listening at port no: ${port}`);
 });

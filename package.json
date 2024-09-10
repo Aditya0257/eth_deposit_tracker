@@ -27,5 +27,8 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.6.2",
     "winston": "^3.14.2"
+  },
+  "devDependencies": {
+    "@types/winston": "^2.4.4"
   }
 }
