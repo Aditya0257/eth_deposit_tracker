@@ -46,15 +46,15 @@ The Ethereum Deposit Tracker is a project designed to monitor and record ETH dep
 
 1. Clone the Repository
    ```
-   git clone <repository-url>
-   cd <repository-directory>
+   git clone https://github.com/Aditya0257/luganodes-be
+   cd luganodes-be
    ```
 
 2. Create Environment File
    Copy `.env.example` to `.env` and update it with your database credentials and other environment variables:
    
    ```
-   DATABASE_URL=postgresql://user:password@db:5432/mydatabase
+   DATABASE_URL=<postgresql://postgres:postgres@db:5432/eth_deposits> (Your DB URL)
    POSTGRES_USER=user
    POSTGRES_PASSWORD=password
    POSTGRES_DB=mydatabase
@@ -87,7 +87,7 @@ The Ethereum Deposit Tracker is a project designed to monitor and record ETH dep
    npm start
    ```
 
-### Fetching Data
+### Real Time Data Fetching
 
 The application uses a combination of Alchemy webhooks and JSON RPC methods to fetch and process data related to Ethereum deposits.
 
@@ -99,7 +99,7 @@ The application uses a combination of Alchemy webhooks and JSON RPC methods to f
 
 The PostgreSQL database is used to store deposit records and other relevant data. In the Docker Compose setup, the database is configured with the following details:
 
-- **PostgreSQL Database URL**: `postgresql://user:password@db:5432/mydatabase`
+- **PostgreSQL Database URL**: `postgresql://postgres:postgres@db:5432/eth_deposits`
 
 - **Docker Compose Configuration**: The database is set up as an ephemeral container in Docker Compose. This means that data will not be persisted between container restarts or rebuilds. If persistent storage is needed, additional configuration for Docker volumes would be required.
 
@@ -131,4 +131,4 @@ This project is licensed under the MIT License. See the LICENSE file for details
 
 ## Contact
 
-For any questions or feedback, please contact [Your Name](mailto:your.email@example.com).
+For any questions or feedback, please contact [adityasinghthakur.0257@gmail.com](mailto:adityasinghthakur.0257@gmail.com).
