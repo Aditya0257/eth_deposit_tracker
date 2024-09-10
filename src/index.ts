@@ -69,14 +69,14 @@ app.post("/txntracker", async (req: any, res: any) => {
         // const data = log.data;
         // const topics = log.topics;
         // const logIndex = parseInt(log.logIndex, 16);
-        const pubKey = activity.rawContract.address;
+        const pubkey = activity.rawContract.address;
 
         const deposit: Deposit = {
           blockNumber: blockNumber,
           blockTimestamp: timestamp,
           fee: parseInt(fee),
           hash: transactionHash,
-          pubKey: pubKey,
+          pubkey: pubkey,
         };
 
         // Save the transaction to the database
@@ -92,7 +92,7 @@ app.post("/txntracker", async (req: any, res: any) => {
             ).toISOString()}\n` +
             `Fee: ${deposit.fee}\n` +
             `Transaction Hash: ${deposit.hash}\n` +
-            `Public Key: ${deposit.pubKey}`
+            `Public Key: ${deposit.pubkey}`
         );
       }
     }
