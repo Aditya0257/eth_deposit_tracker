@@ -2,14 +2,32 @@
 
 ## Overview
 
-The Ethereum Deposit Tracker is a project designed to monitor and record ETH deposits on the Beacon Deposit Contract. It uses JSON RPC for data fetching and Prisma with PostgreSQL for data storage. The application is built with Node.js, Express, and TypeScript, and is containerized using Docker.
+The Ethereum Deposit Tracker is a project designed to monitor and record ETH deposits on the Beacon Deposit Contract. It uses JSON RPC, Alchemy SDK for data fetching and Prisma with PostgreSQL for data storage. Grap The application is built with Node.js, Express, and TypeScript, and is containerized using Docker.
+
+For more detailed documentation and a deeper understanding of the approach and structure, please refer to the [Notion documentation](https://island-wool-188.notion.site/Luganodes-Ethereum-Deposit-Tracker-77fa379dd338442e81b87872eb8d963e).
+
+Join telegram channel to get live updates https://t.me/luganodes0257 after running the application using docker or manually.
+
+Demo Video - https://drive.google.com/file/d/1bx9OW1m_4ZcGAs4cRt43W70UKxTl5Sju/view?usp=sharing
 
 ## Features
 
-- Track Ethereum deposits on the Beacon Deposit Contract using JSON RPC.
+- Real-time monitoring of Ethereum deposits on the Beacon Deposit Contract using JSON RPC.
 - Store deposit records in a PostgreSQL database with Prisma.
 - Containerized setup with Docker and Docker Compose.
-- Automated database migration and seeding.
+- Alert System tracking and visualization using Grafana Dashboard with PostgreSQL.
+- Decodes and processes deposit information.
+- Logs deposit details to a seperate log file.
+- Sends notifications about deposits via Telegram.
+- Calculates transaction fees and provides detailed deposit information.
+
+## Event Flow
+
+1. Alchemy monitors the Ethereum blockchain for events on the Beacon Deposit Contract.
+2. When a deposit event occurs, Alchemy sends a webhook POST request to the `/txntracker` endpoint.
+3. The server processes the event, extracting relevant information.
+4. Deposit data is stored in the database using Prisma.
+5. A Telegram notification is sent with the deposit details.
 
 ## File Structure
 
@@ -40,17 +58,19 @@ The Ethereum Deposit Tracker is a project designed to monitor and record ETH dep
 ### Prerequisites
 
 - Docker and Docker Compose installed.
-- Node.js (for local development and testing).
+- Node.js (>=14.x)
+- Alchemy API Key
+- Telegram Bot Token and Chat ID
 
 ### Configuration
 
 1. Clone the Repository
    ```
-   git clone https://github.com/Aditya0257/luganodes-be
-   cd luganodes-be
+   git clone https://github.com/Aditya0257/luganodes-21BCE10026
+   cd luganodes-21BCE10026
    ```
 
-2. Create Environment File
+2. Mannual Way: Create Environment File
    Copy `.env.example` to `.env` and update it with your database credentials and other environment variables:
    
    ```
@@ -60,7 +80,7 @@ The Ethereum Deposit Tracker is a project designed to monitor and record ETH dep
    POSTGRES_DB=mydatabase
    ```
 
-3. Build and Run with Docker Compose
+3. Using Docker: Build and Run with Docker Compose
    To build and run the application along with PostgreSQL, use the following commands:
    ```
    docker-compose build
