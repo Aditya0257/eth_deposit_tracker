@@ -105,6 +105,7 @@ Demo Video - <https://drive.google.com/file/d/1bx9OW1m_4ZcGAs4cRt43W70UKxTl5Sju/
 
 - The `db:setup` script in the `package.json` handles database migrations and seeding.
 - This script will be run automatically when starting the container with Docker Compose.
+- **Note:** Currently, commented the `seed.ts` file as we are using neon.db for postgres database url, so data persists there unlike local postgres containers which are ephemeral, so we dont require transaction history after testing phase.
 
    For local development, you can run:
 
@@ -128,7 +129,7 @@ The application uses a combination of Alchemy webhooks and JSON RPC methods to f
 
 - **Alchemy Webhooks**: The endpoint `https://luganodes.corevision.live/txntracker` receives real-time data for deposits on the Beacon Deposit Contract. This webhook provides updates on deposit events as they occur.
 
-- **JSON RPC with Axios**: For fetching additional data, such as public keys, that is not provided by the webhook, the application uses Axios to make JSON RPC calls. These calls are made to the Ethereum network to fetch details such as public keys for the deposits.
+- **JSON RPC with Axios**: For fetching additional data, such as transaction history, that is not provided by the real time monitoring webhook, there is a `seed.ts` file that can use Axios to make JSON RPC calls. These calls can be made to the Ethereum network to fetch details for the past deposits.
 
 ### PostgreSQL Setup
 
