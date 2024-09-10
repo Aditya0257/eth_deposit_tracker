@@ -10,6 +10,10 @@ const port = 3000;
 
 const BEACON_DEPOSIT_CONTRACT =
   "0x00000000219ab540356cBB839Cbe05303d7705Fa".toLowerCase();
+
+const telegramBotToken = "7534814123:AAHF4D7uQxa2dW_m6LsbYIb2XDVNNEItP4M";
+const telegramChatId = "-1002392762080";
+
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
 const ALCHEMY_BASE_URL = `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`;
 
@@ -56,6 +60,20 @@ type Deposit = any;
 
 type WebhookEvent = any;
 
+// Function to send Telegram notifications
+const sendTelegramNotification = async (message: any) => {
+  try {
+    const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
+    await axios.post(url, {
+      chat_id: telegramChatId,
+      text: message,
+    });
+    console.log("Telegram notification sent.");
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 async function getTransactionData(txHash: string): Promise<TransactionData> {
   const response = await axios.post(ALCHEMY_BASE_URL, {
     jsonrpc: "2.0",
@@ -95,6 +113,7 @@ app.post("/txntracker", async (req: Request, res: Response) => {
 
           // await prisma.deposit.create({ data: deposit });
           console.log("New deposit saved:", deposit);
+          await sendTelegramNotification("HEllo");
         } else {
           console.log(
             "Activity not related to Beacon Deposit Contract:",
