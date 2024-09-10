@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Ethereum Deposit Tracker is a project designed to monitor and record ETH deposits on the Beacon Deposit Contract. It uses JSON RPC, Alchemy SDK for data fetching and Prisma with PostgreSQL for data storage. Grap The application is built with Node.js, Express, and TypeScript, and is containerized using Docker.
+The Ethereum Deposit Tracker is a project designed to monitor and record ETH deposits on the Beacon Deposit Contract. It uses JSON RPC, Alchemy SDK for data fetching and Prisma with PostgreSQL for data storage. The application is built with Node.js, Express, and TypeScript, and is containerized using Docker.
 
 For more detailed documentation and a deeper understanding of the approach and structure, please refer to the [Notion documentation](https://island-wool-188.notion.site/Luganodes-Ethereum-Deposit-Tracker-77fa379dd338442e81b87872eb8d963e).
 
