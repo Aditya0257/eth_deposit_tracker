@@ -6,9 +6,9 @@ The Ethereum Deposit Tracker is a project designed to monitor and record ETH dep
 
 For more detailed documentation and a deeper understanding of the approach and structure, please refer to the [Notion documentation](https://island-wool-188.notion.site/Luganodes-Ethereum-Deposit-Tracker-77fa379dd338442e81b87872eb8d963e).
 
-Join telegram channel to get live updates https://t.me/luganodes0257 after running the application using docker or manually.
+Join telegram channel to get live updates <https://t.me/luganodes0257> after running the application using docker or manually.
 
-Demo Video - https://drive.google.com/file/d/1bx9OW1m_4ZcGAs4cRt43W70UKxTl5Sju/view?usp=sharing
+Demo Video - <https://drive.google.com/file/d/1bx9OW1m_4ZcGAs4cRt43W70UKxTl5Sju/view?usp=sharing>
 
 ## Features
 
@@ -40,17 +40,25 @@ Demo Video - https://drive.google.com/file/d/1bx9OW1m_4ZcGAs4cRt43W70UKxTl5Sju/v
 ├── /prisma
 │   └── schema.prisma
 │
+├── /logs
+│   └── combined.log
+│   └── error.log
+|
 ├── /src
 │   └── index.ts
 │   └── seed.ts
+│   └── logger.ts
 │
 ├── /scripts
 │   └── start.sh
 │
 ├── docker-compose.yml
 ├── .env.example
+├── .env
+├── .gitignore
 └── package.json
 └── tsconfig.json
+└── README.md
 ```
 
 ## Setup
@@ -64,15 +72,17 @@ Demo Video - https://drive.google.com/file/d/1bx9OW1m_4ZcGAs4cRt43W70UKxTl5Sju/v
 
 ### Configuration
 
-1. Clone the Repository
+#### 1. Clone the Repository
+
    ```
    git clone https://github.com/Aditya0257/luganodes-21BCE10026
    cd luganodes-21BCE10026
    ```
 
-2. Mannual Way: Create Environment File
+#### 2. Mannual Way: Create .env File
+
    Copy `.env.example` to `.env` and update it with your database credentials and other environment variables:
-   
+
    ```
    DATABASE_URL=<postgresql://postgres:postgres@db:5432/eth_deposits> (Your DB URL)
    POSTGRES_USER=user
@@ -80,28 +90,33 @@ Demo Video - https://drive.google.com/file/d/1bx9OW1m_4ZcGAs4cRt43W70UKxTl5Sju/v
    POSTGRES_DB=mydatabase
    ```
 
-3. Using Docker: Build and Run with Docker Compose
-   To build and run the application along with PostgreSQL, use the following commands:
+#### 3. Using Docker: Build and Run with Docker Compose
+
    ```
-   docker-compose build
-   docker-compose up
+   docker compose build --no-cache
+   docker compose up
    ```
+
    The application will run, and migrations will be applied automatically.
 
 ## Usage
 
-1. Migrations and Seeding
-   The `db:setup` script in the `package.json` handles database migrations and seeding. This script will be run automatically when starting the container with Docker Compose.
+### 1. Migrations and Seeding
+
+- The `db:setup` script in the `package.json` handles database migrations and seeding.
+- This script will be run automatically when starting the container with Docker Compose.
 
    For local development, you can run:
+
    ```
    npm run db:setup
    ```
 
-2. Starting the Application
-   The application is configured to start automatically with Docker Compose. It will execute the build process and then start the Express server.
+### 2. Starting the Application
 
-   For local development, you can build and start the application with:
+- The application is configured to start automatically with Docker Compose. It will execute the build process and then start Express server.
+- For local development, you can build and start the application with:
+
    ```
    npm run build
    npm start
