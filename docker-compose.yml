@@ -7,8 +7,8 @@ services:
       dockerfile: docker/Dockerfile.eth_webhook
     container_name: eth_deposit_tracker
     environment:
-      - DATABASE_URL="postgresql://postgres:postgres@db:5432/eth_deposits"
-      - ALCHEMY_API_KEY="jCDsAl8JhBC4dmHzidPbiVRUioW5GcBa"
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/eth_deposits
+      - ALCHEMY_API_KEY=jCDsAl8JhBC4dmHzidPbiVRUioW5GcBa
     ports:
       - "3000:3000"
     depends_on:
@@ -17,6 +17,7 @@ services:
   db:
     image: postgres:alpine
     container_name: eth_deposit_db
+    restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
