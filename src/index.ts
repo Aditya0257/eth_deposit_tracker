@@ -1,4 +1,4 @@
-const { express } = require("express");
+const express = require("express");
 const { PrismaClient } = require("@prisma/client");
 const { ethers } = require("ethers");
 const axios = require("axios");
@@ -12,7 +12,7 @@ const app = express();
 const port = 3000;
 
 const BEACON_DEPOSIT_CONTRACT =
-  "0x00000000219ab540356cBB839Cbe05303d7705Fa".toLowerCase();
+  "0x00000000219ab540356cBB839Cbe05303d7705Fa";
 
 const telegramBotToken = "7534814123:AAHF4D7uQxa2dW_m6LsbYIb2XDVNNEItP4M";
 const telegramChatId = "-1002392762080";
@@ -81,7 +81,7 @@ const eventABI = [
 const contractInterface = new Interface(eventABI);
 
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
-const ALCHEMY_BASE_URL = `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`;
+// const ALCHEMY_BASE_URL = `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`;
 
 const settings = {
   apiKey: process.env.ALCHEMY_API_KEY,
