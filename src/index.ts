@@ -74,7 +74,7 @@ app.post("/txntracker", async (req: any, res: any) => {
         const deposit: Deposit = {
           blockNumber: blockNumber,
           blockTimestamp: timestamp,
-          fee: parseInt(fee),
+          fee: BigInt(fee),
           hash: transactionHash,
           pubkey: pubkey,
         };

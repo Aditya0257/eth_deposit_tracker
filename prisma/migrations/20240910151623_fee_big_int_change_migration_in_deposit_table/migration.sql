@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Deposit" ALTER COLUMN "fee" SET DATA TYPE BIGINT;
