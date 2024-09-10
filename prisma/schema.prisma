@@ -16,9 +16,9 @@ datasource db {
 model Deposit {
   id             Int      @id @default(autoincrement())
   blockNumber    Int
-  blockTimestamp BigInt
-  fee            BigInt
-  hash           String   @unique
+  blockTimestamp Int
+  fee            Int
+  hash           String 
   pubkey         String
   createdAt      DateTime @default(now())
 }

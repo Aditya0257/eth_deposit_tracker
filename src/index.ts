@@ -74,17 +74,26 @@ app.post("/txntracker", async (req: any, res: any) => {
         const deposit: Deposit = {
           blockNumber: blockNumber,
           blockTimestamp: timestamp,
-          fee: fee,
+          fee: parseInt(fee),
           hash: transactionHash,
           pubKey: pubKey,
         };
 
         // Save the transaction to the database
-        // await prisma.transaction.create({ data: transaction });
+        await prisma.deposit.create({ data: deposit });
         console.log("New Deposit Transaction saved:", deposit);
 
-        // Send a notification
-        await sendTelegramNotification("New deposit transaction detected with this data: " + deposit);
+        // Send a notification with formatted deposit data
+        await sendTelegramNotification(
+          `New deposit transaction detected:\n` +
+            `Block Number: ${deposit.blockNumber}\n` +
+            `Timestamp: ${new Date(
+              deposit.blockTimestamp * 1000
+            ).toISOString()}\n` +
+            `Fee: ${deposit.fee}\n` +
+            `Transaction Hash: ${deposit.hash}\n` +
+            `Public Key: ${deposit.pubKey}`
+        );
       }
     }
 
