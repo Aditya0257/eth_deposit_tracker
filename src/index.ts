@@ -8,7 +8,7 @@ const { BigNumber } = require("@ethersproject/bignumber");
 import logger from './logger';
 
 const app = express();
-const port = 3000;
+const port = 3800;
 
 const BEACON_DEPOSIT_CONTRACT = "0x00000000219ab540356cBB839Cbe05303d7705Fa";
 
@@ -83,6 +83,7 @@ app.post("/txntracker", async (req: any, res: any) => {
 
         // Save the transaction to the database
         await prisma.deposit.create({ data: deposit });
+        console.log("New Deposit Transaction saved:", deposit);
         logger.info("New Deposit Transaction saved:", deposit);
 
         // Send a notification with formatted deposit data

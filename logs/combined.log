@@ -188,3 +188,4 @@
         "pubkey": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
         "createdAt": "2024-09-10T10:17:25.758Z"
     }
+{"level":"info","message":"Webhook server listening at port no: 3800"}
