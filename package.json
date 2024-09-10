@@ -3,17 +3,25 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npx esbuild ./src/index.ts --bundle --platform=node --outfile=dist/index.js",
+    "start": "node dist/index.js",
+    "dev": "npm run build && npm run start",
+    "db:migrate": "npx prisma migrate dev",
+    "db:setup": "npx prisma migrate dev && npx prisma generate && npx ts-node src/seed.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
   "description": "",
   "dependencies": {
+    "@ethersproject/bignumber": "^5.7.0",
+    "@prisma/client": "^5.19.1",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.5.4",
+    "axios": "^1.7.7",
+    "dotenv": "^16.4.5",
+    "ethers": "^6.13.2",
     "express": "^4.19.2",
-    "node-fetch": "^3.3.2",
-    "path": "^0.12.7",
-    "socket.io": "^4.7.5"
+    "ts-node": "^10.9.2"
   }
 }

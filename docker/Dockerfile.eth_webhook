@@ -1,0 +1,25 @@
+FROM node:lts-alpine AS base
+
+RUN apk --no-cache add postgresql-client bash dos2unix
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+
+COPY prisma ./prisma
+
+COPY tsconfig.json ./
+
+COPY src ./src
+
+RUN npm install
+
+RUN npx prisma generate
+
+COPY scripts/start.sh /app/start.sh
+
+RUN dos2unix /app/start.sh && chmod +x /app/start.sh
+
+COPY . .
+
+CMD ["/app/start.sh", "npm", "run", "dev"]
