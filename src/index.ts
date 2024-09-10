@@ -1,9 +1,12 @@
-import express, { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
-import { ethers } from "ethers";
-import axios from "axios";
-import "dotenv/config";
-import { BigNumber } from "@ethersproject/bignumber";
+const { express } = require("express");
+const { PrismaClient } = require("@prisma/client");
+const { ethers } = require("ethers");
+const axios = require("axios");
+require("dotenv").config();
+const { Alchemy, Network } = require("alchemy-sdk");
+const { BigNumber } = require("@ethersproject/bignumber");
+const { Interface } = require("@ethersproject/abi");
+const fs = require("fs");
 
 const app = express();
 const port = 3000;
@@ -14,24 +17,83 @@ const BEACON_DEPOSIT_CONTRACT =
 const telegramBotToken = "7534814123:AAHF4D7uQxa2dW_m6LsbYIb2XDVNNEItP4M";
 const telegramChatId = "-1002392762080";
 
+// Define ABI for the DepositEvent
+const eventABI = [
+  { inputs: [], stateMutability: "nonpayable", type: "constructor" },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: false, internalType: "bytes", name: "pubkey", type: "bytes" },
+      {
+        indexed: false,
+        internalType: "bytes",
+        name: "withdrawal_credentials",
+        type: "bytes",
+      },
+      { indexed: false, internalType: "bytes", name: "amount", type: "bytes" },
+      {
+        indexed: false,
+        internalType: "bytes",
+        name: "signature",
+        type: "bytes",
+      },
+      { indexed: false, internalType: "bytes", name: "index", type: "bytes" },
+    ],
+    name: "DepositEvent",
+    type: "event",
+  },
+  {
+    inputs: [
+      { internalType: "bytes", name: "pubkey", type: "bytes" },
+      { internalType: "bytes", name: "withdrawal_credentials", type: "bytes" },
+      { internalType: "bytes", name: "signature", type: "bytes" },
+      { internalType: "bytes32", name: "deposit_data_root", type: "bytes32" },
+    ],
+    name: "deposit",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "get_deposit_count",
+    outputs: [{ internalType: "bytes", name: "", type: "bytes" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "get_deposit_root",
+    outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "bytes4", name: "interfaceId", type: "bytes4" }],
+    name: "supportsInterface",
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    stateMutability: "pure",
+    type: "function",
+  },
+];
+
+// Create an Interface for decoding each transaction data
+const contractInterface = new Interface(eventABI);
+
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
 const ALCHEMY_BASE_URL = `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`;
+
+const settings = {
+  apiKey: process.env.ALCHEMY_API_KEY,
+  network: Network.ETH_MAINNET,
+  maxRetries: 10,
+};
+
+const alchemy = new Alchemy(settings);
 
 const prisma = new PrismaClient();
 
 app.use(express.json());
-
-// interface TransactionData {
-//   blockNumber: number;
-//   hash: string;
-//   fromAddress: string;
-//   value: string;
-//   input: string;
-//   gasPrice: string;
-//   gas: string;
-// }
-
-type TransactionData = any;
 
 // interface Deposit {
 //   blockNumber: number;
@@ -43,21 +105,7 @@ type TransactionData = any;
 //   fee: string;
 // }
 
-type Deposit = any;
-
-// interface WebhookEvent {
-//   event: {
-//     activity: {
-//       toAddress: string;
-//       hash: string;
-//       blockNum: string;
-//       fromAddress: string;
-//       value: string;
-//     }[];
-//     createdAt: string;
-//   };
-// }
-
+type Transaction = any;
 type WebhookEvent = any;
 
 // Function to send Telegram notifications
@@ -74,23 +122,7 @@ const sendTelegramNotification = async (message: any) => {
   }
 };
 
-async function getTransactionData(txHash: string): Promise<TransactionData> {
-  const response = await axios.post(ALCHEMY_BASE_URL, {
-    jsonrpc: "2.0",
-    id: 1,
-    method: "eth_getTransactionByHash",
-    params: [txHash],
-  });
-
-  return response.data.result;
-}
-
-function decodePubKey(inputData: string): string {
-  // The pubKey starts at index 64 and is 48 bytes long
-  return "0x" + inputData.slice(64, 160);
-}
-
-app.post("/txntracker", async (req: Request, res: Response) => {
+app.post("/txntracker", async (req: any, res: any) => {
   try {
     console.log("Notification received!");
 
@@ -98,28 +130,32 @@ app.post("/txntracker", async (req: Request, res: Response) => {
 
     if (event && event.activity) {
       for (const activity of event.activity) {
-        if (activity.toAddress.toLowerCase() === BEACON_DEPOSIT_CONTRACT) {
-          const txData = await getTransactionData(activity.hash);
+        // if (activity.toAddress.toLowerCase() === BEACON_DEPOSIT_CONTRACT) {
 
-          const deposit: Deposit = {
-            blockNumber: parseInt(activity.blockNum, 16),
-            blockTimestamp: new Date(event.createdAt).getTime() / 1000,
-            hash: activity.hash,
-            fromAddress: activity.fromAddress,
-            value: ethers.formatUnits(activity.value, "ether"),
-            pubKey: decodePubKey(txData.input),
-            fee: BigNumber.from(txData.gasPrice).mul(txData.gas).toString(),
-          };
+        const blockNumber = parseInt(activity.blockNum, 16);
+        const block = await alchemy.core.getBlock(blockNumber);
+        const timestamp = block.timestamp;
 
-          // await prisma.deposit.create({ data: deposit });
-          console.log("New deposit saved:", deposit);
-          await sendTelegramNotification("HEllo");
-        } else {
-          console.log(
-            "Activity not related to Beacon Deposit Contract:",
-            activity.toAddress
-          );
-        }
+        const hash = activity.log.transactionHash;
+        const receipt = await alchemy.core.getTransactionReceipt(hash);
+        const fee = receipt.gasUsed.mul(receipt.effectiveGasPrice).toString();
+
+        const decodedLog = contractInterface.parseLog(activity);
+        const { pubkey, amount } = decodedLog.args;
+        const pubKey = ethers.hexlify(pubkey);
+
+        const transaction: Transaction = {
+          blockNumber: blockNumber,
+          blockTimestamp: timestamp,
+          fee: fee,
+          hash: hash,
+          pubKey: pubKey,
+        };
+
+        // await prisma.deposit.create({ data: deposit });
+        console.log("New transaction saved:", transaction);
+
+        await sendTelegramNotification("HEllo");
       }
     }
 
@@ -130,7 +166,7 @@ app.post("/txntracker", async (req: Request, res: Response) => {
   }
 });
 
-app.get("/*", (req: Request, res: Response) => {
+app.get("/*", (req: any, res: any) => {
   res.json({
     message: "Server is running!",
     success: true,
