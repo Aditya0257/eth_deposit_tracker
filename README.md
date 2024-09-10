@@ -161,10 +161,6 @@ The seeding script (`src/seed.ts`) inserts the latest 5 transactions from the Be
 
 Feel free to open issues or submit pull requests to improve the project. Contributions are welcome!
 
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for details.
-
 ## Contact
 
 For any questions or feedback, please contact [adityasinghthakur.0257@gmail.com](mailto:adityasinghthakur.0257@gmail.com).
