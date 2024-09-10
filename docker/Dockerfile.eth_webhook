@@ -8,6 +8,8 @@ COPY package.json package-lock.json ./
 
 COPY prisma ./prisma
 
+RUN npm install -g typescript
+
 COPY tsconfig.json ./
 
 COPY src ./src
