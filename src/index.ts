@@ -5,16 +5,14 @@ const axios = require("axios");
 require("dotenv").config();
 const { Alchemy, Network } = require("alchemy-sdk");
 const { BigNumber } = require("@ethersproject/bignumber");
-const { Interface } = require("@ethersproject/abi");
-const fs = require("fs");
 
 const app = express();
 const port = 3000;
 
 const BEACON_DEPOSIT_CONTRACT = "0x00000000219ab540356cBB839Cbe05303d7705Fa";
 
-const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN;
-const telegramChatId = process.env.TELEGRAM_CHAT_ID;
+const telegramBotToken = "7534814123:AAHF4D7uQxa2dW_m6LsbYIb2XDVNNEItP4M";
+const telegramChatId = "-1002392762080";
 
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
 const settings = {
@@ -86,7 +84,7 @@ app.post("/txntracker", async (req: any, res: any) => {
         console.log("New Deposit Transaction saved:", deposit);
 
         // Send a notification
-        await sendTelegramNotification("New deposit transaction detected.");
+        await sendTelegramNotification("New deposit transaction detected with this data: " + deposit);
       }
     }
 
