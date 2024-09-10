@@ -9,7 +9,7 @@ const { Interface } = require("@ethersproject/abi");
 const fs = require("fs");
 
 const app = express();
-const port = 3000;
+const port = 5000;
 
 const BEACON_DEPOSIT_CONTRACT = "0x00000000219ab540356cBB839Cbe05303d7705Fa";
 
@@ -88,9 +88,8 @@ app.post("/txntracker", async (req: any, res: any) => {
         const log = activity.log;
 
         // Filter for DepositEvent
-        const depositEventTopic = ethers.utils.id(
-          "DepositEvent(bytes,bytes,bytes,bytes,bytes)"
-        );
+
+        const depositEventTopic = ethers.id("DepositEvent(bytes,bytes,bytes,bytes,bytes)");
 
         if (log.topics[0] === depositEventTopic) {
           const blockNumber = parseInt(log.blockNumber, 16);
