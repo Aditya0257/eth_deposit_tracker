@@ -1,19 +1,19 @@
-import express from 'express';
-import { PrismaClient } from '@prisma/client';
-import { ethers } from 'ethers';
-import axios from 'axios';
+import express from "express";
+import { PrismaClient } from "@prisma/client";
+import { ethers } from "ethers";
+import axios from "axios";
 require("dotenv").config();
 const { Alchemy, Network } = require("alchemy-sdk");
 const { BigNumber } = require("@ethersproject/bignumber");
-import logger from './logger';
+import logger from "./logger";
 
 const app = express();
 const port = 3000;
 
-const BEACON_DEPOSIT_CONTRACT = "0x00000000219ab540356cBB839Cbe05303d7705Fa";
+const BEACON_DEPOSIT_CONTRACT = "<YOUR BEACON_DEPOSIT_CONTRACT>";
 
-const telegramBotToken = "7534814123:AAHF4D7uQxa2dW_m6LsbYIb2XDVNNEItP4M";
-const telegramChatId = "-1002392762080";
+const telegramBotToken = "<YOUR TELEGRAM BOT TOKEN>";
+const telegramChatId = "<YOUR TELEGRAM CHAT ID>";
 
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
 const settings = {
@@ -60,9 +60,8 @@ app.post("/txntracker", async (req: any, res: any) => {
         const timestamp = block.timestamp;
 
         const transactionHash = log.transactionHash;
-        const receipt = await alchemy.core.getTransactionReceipt(
-          transactionHash
-        );
+        const receipt =
+          await alchemy.core.getTransactionReceipt(transactionHash);
         const fee = receipt.gasUsed.mul(receipt.effectiveGasPrice).toString();
 
         // const blockHash = log.blockHash;
@@ -91,11 +90,11 @@ app.post("/txntracker", async (req: any, res: any) => {
           `New deposit transaction detected:\n` +
             `Block Number: ${deposit.blockNumber}\n` +
             `Timestamp: ${new Date(
-              deposit.blockTimestamp * 1000
+              deposit.blockTimestamp * 1000,
             ).toISOString()}\n` +
             `Fee: ${deposit.fee}\n` +
             `Transaction Hash: ${deposit.hash}\n` +
-            `Public Key: ${deposit.pubkey}`
+            `Public Key: ${deposit.pubkey}`,
         );
       }
     }
