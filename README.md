@@ -74,30 +74,30 @@ Demo Video - <https://drive.google.com/file/d/1bx9OW1m_4ZcGAs4cRt43W70UKxTl5Sju/
 
 #### 1. Clone the Repository
 
-   ```
-   git clone https://github.com/Aditya0257/luganodes-21BCE10026
-   cd luganodes-21BCE10026
-   ```
+```
+git clone https://github.com/Aditya0257/eth_deposit_tracker
+cd eth_deposit_tracker
+```
 
 #### 2. Manual Way: Create .env File
 
-   Copy `.env.example` to `.env` and update it with your database credentials and other environment variables:
+Copy `.env.example` to `.env` and update it with your database credentials and other environment variables:
 
-   ```
-   DATABASE_URL=<postgresql://postgres:postgres@db:5432/eth_deposits> (Your DB URL)
-   POSTGRES_USER=user
-   POSTGRES_PASSWORD=password
-   POSTGRES_DB=mydatabase
-   ```
+```
+DATABASE_URL=<postgresql://postgres:postgres@db:5432/eth_deposits> (Your DB URL)
+POSTGRES_USER=user
+POSTGRES_PASSWORD=password
+POSTGRES_DB=mydatabase
+```
 
 #### 3. Using Docker: Build and Run with Docker Compose
 
-   ```
-   docker compose build --no-cache
-   docker compose up
-   ```
+```
+docker compose build --no-cache
+docker compose up
+```
 
-   The application will run, and migrations will be applied automatically.
+The application will run, and migrations will be applied automatically.
 
 ## Usage
 
@@ -107,21 +107,21 @@ Demo Video - <https://drive.google.com/file/d/1bx9OW1m_4ZcGAs4cRt43W70UKxTl5Sju/
 - This script will be run automatically when starting the container with Docker Compose.
 - **Note:** Currently, commented the `seed.ts` file as we are using neon.db for postgres database url, so data persists there unlike local postgres containers which are ephemeral, so we dont require transaction history after testing phase.
 
-   For local development, you can run:
+  For local development, you can run:
 
-   ```
-   npm run db:setup
-   ```
+  ```
+  npm run db:setup
+  ```
 
 ### 2. Starting the Application
 
 - The application is configured to start automatically with Docker Compose. It will execute the build process and then start Express server.
 - For local development, you can build and start the application with:
 
-   ```
-   npm run build
-   npm start
-   ```
+  ```
+  npm run build
+  npm start
+  ```
 
 ### Real Time Data Fetching
 
