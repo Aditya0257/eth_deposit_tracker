@@ -6,8 +6,6 @@ The Ethereum Deposit Tracker is a project designed to monitor and record ETH dep
 
 For more detailed documentation and a deeper understanding of the approach and structure, please refer to the [Notion documentation](https://island-wool-188.notion.site/Luganodes-Ethereum-Deposit-Tracker-77fa379dd338442e81b87872eb8d963e).
 
-Join telegram channel to get live updates <https://t.me/luganodes0257> after running the application using docker or manually.
-
 Demo Video - <https://drive.google.com/file/d/1bx9OW1m_4ZcGAs4cRt43W70UKxTl5Sju/view?usp=sharing>
 
 ## Features
